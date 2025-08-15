@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>跳转提示</title>
+<style>
+body {
+    font-family: "Segoe UI", sans-serif;
+    margin:0; padding:0;
+    height:100vh; width:100vw; position:relative;
+    overflow:hidden;
+    /* 动态淡彩虹背景 */
+    background: linear-gradient(270deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb, #d4fc79, #96e6a1);
+    background-size: 1200% 1200%;
+    animation: gradientBG 30s ease infinite;
+}
+
+/* 背景渐变动画 */
+@keyframes gradientBG {
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+#guider {
+    position: fixed; top:12px; right:12px;
+    display:flex; flex-direction:column; align-items:flex-end; z-index:100;
+}
+.triangle {
+    width:16px; height:16px;
+    background:#3AB2A7;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    animation: bounce 1s infinite alternate;
+    margin-bottom:4px;
+}
+@keyframes bounce {0%{transform: translateY(0);} 100%{transform: translateY(-6px);}}
+.tips {
+    background:#3AB2A7;
+    color:white;
+    font-size:0.8em;
+    padding:6px 10px;
+    border-radius:10px;
+    text-align:center;
+    line-height:1.2;
+}
+
+.container {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    background: rgba(255,255,255,0.85);
+    padding:30px; border-radius:20px; box-shadow:0 15px 30px rgba(0,0,0,0.15); 
+    max-width:400px; width:90%; text-align:center;
+    backdrop-filter: blur(10px);
+    animation: popIn 0.6s ease;
+}
+@keyframes popIn {0%{transform:translate(-50%,-50%) scale(0.9); opacity:0;} 100%{transform:translate(-50%,-50%) scale(1); opacity:1;}}
+
+h2 { margin:0 0 12px; color:#333; font-size:1.6em;}
+p { color:#555; line-height:1.5; margin-bottom:16px;}
+
+/* Logo设计 */
+#logo {
+    width:80px; height:80px;
+    margin:12px auto;
+    background: linear-gradient(135deg,#36d1dc,#5b86e5);
+    border-radius:20%;
+    display:flex; justify-content:center; align-items:center;
+    color:white; font-weight:bold; font-size:1.2em;
+    box-shadow:0 8px 15px rgba(0,0,0,0.2);
+    animation: logoGradient 8s linear infinite alternate;
+}
+@keyframes logoGradient {
+    0% { background: linear-gradient(135deg,#ff9a9e,#fad0c4);}
+    25% { background: linear-gradient(135deg,#a1c4fd,#c2e9fb);}
+    50% { background: linear-gradient(135deg,#d4fc79,#96e6a1);}
+    75% { background: linear-gradient(135deg,#fad0c4,#ff9a9e);}
+    100% { background: linear-gradient(135deg,#a1c4fd,#c2e9fb);}
+}
+
+/* 二维码缩小 */
+#qrcode img { margin-top:12px; width:150px; height:150px; border-radius:12px; }
+
+/* 复制按钮 */
+button.copyBtn {
+    padding:12px 20px; border-radius:12px; border:none; font-size:16px; cursor:pointer;
+    background: linear-gradient(90deg,#36D1DC,#5B86E5); color:white; transition:0.2s all;
+}
+button.copyBtn:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+button.copyBtn:active { transform:translateY(0) scale(0.97); box-shadow:0 2px 8px rgba(0,0,0,0.2); }
+code { background:#f0f4f8; padding:4px 8px; border-radius:8px; display:inline-block; word-break:break-all; font-size:0.9em;}
+</style>
+</head>
+<body>
+<div id="guider">
+    <div class="triangle"></div>
+    <div class="tips">点击右上角<br/>选择“浏览器中打开”</div>
+</div>
+
+<div class="container">
+    <div id="logo"></div>
+    <h2>微信/QQ 内无法直接打开</h2>
+    <p>复制链接后请在浏览器中打开</p>
+    <div id="panel">
+        <p><code id="urlBox"></code></p>
+        <button class="copyBtn" id="copyBtn">一键复制链接</button>
+    </div>
+</div>
+
+<script>
+// 获取目标链接
+function getQueryParam(name){return new URLSearchParams(window.location.search).get(name);}
+const target = getQueryParam('t') || null;
+const urlBox=document.getElementById('urlBox');
+const copyBtn=document.getElementById('copyBtn');
+
+const isWeixin = /MicroMessenger/i.test(navigator.userAgent);
+const isQQ = /QQ\//i.test(navigator.userAgent);
+
+if(target){
+    urlBox.textContent = target;
+    if(!isWeixin && !isQQ){
+        // 浏览器中直接跳转
+        window.location.href = target;
+    }
+}else{
+    urlBox.textContent = '未指定目标链接';
+}
+
+copyBtn.onclick = async ()=>{
+    if(target){
+        try{ await navigator.clipboard.writeText(target); alert('已复制到剪贴板，请在浏览器粘贴打开'); }
+        catch{ alert('复制失败，请手动复制'); }
+    }
+};
+</script>
+</body>
+</html>
