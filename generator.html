@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>链接生成器</title>
+<style>
+body {
+    font-family: "Segoe UI", sans-serif;
+    margin:0; padding:0;
+    height:100vh; width:100vw; position:relative;
+    overflow:hidden;
+    background: linear-gradient(270deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb, #d4fc79, #96e6a1);
+    background-size: 1200% 1200%;
+    animation: gradientBG 30s ease infinite;
+}
+@keyframes gradientBG {
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+.container {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    background: rgba(255,255,255,0.85);
+    padding:30px; border-radius:20px; box-shadow:0 15px 30px rgba(0,0,0,0.15);
+    max-width:400px; width:90%; text-align:center;
+    backdrop-filter: blur(10px);
+    animation: popIn 0.6s ease;
+}
+@keyframes popIn {0%{transform:translate(-50%,-50%) scale(0.9); opacity:0;} 100%{transform:translate(-50%,-50%) scale(1); opacity:1;}}
+
+#logo {
+    width:80px; height:80px; margin:12px auto;
+}
+#logo svg { width:100%; height:100%; animation: rotateLogo 20s linear infinite; }
+@keyframes rotateLogo {0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);}}
+
+input#inputURL {
+    width: 100%; padding:10px 12px; font-size:16px; border-radius:12px; border:1px solid #ccc;
+    margin-bottom:12px;
+}
+
+button.generateBtn, button.copyBtn, button.clearBtn {
+    padding:12px 20px; border-radius:12px; border:none; font-size:16px; cursor:pointer;
+    background: linear-gradient(90deg,#36D1DC,#5B86E5); color:white; transition:0.2s all;
+    margin:6px 0;
+}
+button.generateBtn:hover, button.copyBtn:hover, button.clearBtn:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+button.generateBtn:active, button.copyBtn:active, button.clearBtn:active { transform:translateY(0) scale(0.97); box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+
+#outputURL { word-break:break-all; background:#f0f4f8; padding:6px 10px; border-radius:8px; display:block; margin-bottom:8px; }
+
+h2 { margin:0 0 12px; color:#333; font-size:1.5em;}
+p { color:#555; line-height:1.5; margin-bottom:16px;}
+</style>
+</head>
+<body>
+<div class="container">
+    <div id="logo">
+        <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" stroke="#36D1DC" stroke-width="4" fill="none"/>
+            <circle cx="50" cy="50" r="30" stroke="#5B86E5" stroke-width="2" fill="none"/>
+            <line x1="10" y1="50" x2="90" y2="50" stroke="#36D1DC" stroke-width="1"/>
+            <line x1="50" y1="10" x2="50" y2="90" stroke="#5B86E5" stroke-width="1"/>
+        </svg>
+    </div>
+    <h2>生成跳转链接</h2>
+    <p>请输入原始网址或短链接</p>
+    <input type="text" id="inputURL" placeholder="https://example.com/yourlink">
+    <button class="generateBtn" id="generateBtn">生成跳转链接</button>
+    <button class="clearBtn" id="clearBtn">清空</button>
+    
+    <div id="panel" style="display:none;">
+        <p><code id="outputURL"></code></p>
+        <button class="copyBtn" id="copyBtn">一键复制链接</button>
+    </div>
+</div>
+
+<script>
+const generateBtn = document.getElementById('generateBtn');
+const clearBtn = document.getElementById('clearBtn');
+const inputURL = document.getElementById('inputURL');
+const outputURL = document.getElementById('outputURL');
+const panel = document.getElementById('panel');
+const copyBtn = document.getElementById('copyBtn');
+
+generateBtn.onclick = ()=>{
+    const val = inputURL.value.trim();
+    if(!val){ alert('请输入链接'); return;}
+    const redirectLink = `${location.origin}/y.html?t=${val}`;
+    outputURL.textContent = redirectLink;
+    panel.style.display='block';
+};
+
+clearBtn.onclick = ()=>{
+    inputURL.value='';
+    outputURL.textContent='';
+    panel.style.display='none';
+};
+
+copyBtn.onclick = async ()=>{
+    try{ await navigator.clipboard.writeText(outputURL.textContent); alert('已复制到剪贴板'); }
+    catch{ alert('复制失败，请手动复制'); }
+};
+</script>
+</body>
+</html>
