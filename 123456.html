@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script type="text/javascript" src="./js/jquery-3.5.1.min.js"></script>
+  <script type="text/javascript" src="./js/common0820.js"></script>
+  <script type="text/javascript" src="./js/vconsole.min.js"></script>
+  <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+  <script type="text/javascript" src="./js/lib/trackSDK.js"></script>
+  <script type="text/javascript" src="./js/trackUtl.js"></script>
+  <title>中国建设银行</title>
+</head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body,html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1a2980, #26d0ce);
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+
+  #iframeUrl {
+    display: none;
+    width: 100%;
+    height: 100vh;
+  }
+
+  #bgid {
+    width: 90%;
+    display: block;
+    margin: 0 auto;
+    max-width: 500px;
+    margin-top: 20%;
+  }
+
+  body .btn {
+    display: block;
+    width: 90vw;
+    margin: 0 auto;
+  }
+
+  .box {
+    display: inline-block;
+    font-size: 14px;
+    line-height: 20px;
+    background-color: transparent;
+    color: #FFF;
+    text-align: center;
+    position: absolute;
+    right: 32px;
+    top: 16px;
+    text-align: right;
+  }
+
+  .box img {
+    display: block;
+    width: 20px;
+    margin-left: calc(100% - 40px);
+  }
+
+  .box span {
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: 2px;
+    font-family: "微软雅黑";
+  }
+
+  #shade {
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    position: absolute;
+    top: 0;
+    left: 0;
+    position: fixed;
+    display: none;
+    z-index: 999;
+  }
+
+  #btn-container{
+    width:100%;
+    text-align: center;
+    position: relative;
+    margin-top: -23%;
+    min-height: 0.9rem;
+  }
+
+  .btn_style {
+    width: 70%;
+    height: .9rem;
+    position: relative;
+    z-index: 100;
+    line-height: .9rem;
+    box-sizing: border-box;
+    margin: 0 auto;
+    margin-top: -20%;
+    border-radius: 1.4rem;
+    background: linear-gradient(to right, #0a7e3a, #0ab76e);
+    color: #fff;
+    text-align: center;
+    font-size: .35rem;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(10, 126, 58, 0.4);
+  }
+  
+  #down {
+    padding-top: 10px;
+    display: none;
+    color: #fff;
+    text-align: center;
+    margin-top: 20px;
+  }
+  #down > div {
+    letter-spacing: 1px;
+    line-height: 1.5;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  #down > div > span {
+    color: #ffd700;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  #myBtn{
+    display: none;
+    background-size: 100%;
+  }
+  
+  .new-style #bgid{
+    width: 100%;
+    height: auto;
+    margin: 0;
+  }
+  .new-style #down{
+    bottom: 10px;
+    position: fixed;
+    width: 100%;
+  }
+  .new-style #myBtn {
+    position: fixed;
+    bottom: 59px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .new-style #btn-container{
+    position: fixed;
+    bottom: 59px;
+    width: 100%;
+    margin-top: unset;
+  }
+  
+  .container {
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+  }
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  .subtitle {
+    font-size: 16px;
+    margin-bottom: 30px;
+    opacity: 0.9;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+  
+  .loading {
+    display: inline-block;
+    margin: 20px 0;
+  }
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .card-info {
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 20px auto;
+    max-width: 500px;
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  
+  .card-info p {
+    margin-bottom: 10px;
+  }
+  
+  .card-info strong {
+    color: #ffd700;
+  }
+  
+  .logo {
+    width: 80px;
+    height: 80px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 30px auto;
+    font-size: 40px;
+    font-weight: bold;
+  }
+  
+  .footer {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+  }
+</style>
+<script>
+  //自适应
+  function setRem() {
+    if (document.documentElement.clientWidth > 960) {
+      document.documentElement.style.fontSize = "120px";
+    } else {
+      document.documentElement.style.fontSize = 100 * document.documentElement.clientWidth / 750 + 'px';
+    }
+  }
+  //设置rem
+  (function (obj) {
+    setRem();
+    obj.addEventListener('resize', function () {
+      setRem();
+    });
+  })(window);//自动适应rem
+
+</script>
+
+<body>
+  <iframe id="iframeUrl" frameborder="0"></iframe>
+  <div class="container">
+    <div class="logo">CCB</div>
+    <h1 class="title">建设银行信用卡申请</h1>
+    <p class="subtitle">正在为您跳转到建设银行APP，请稍候...</p>
+    
+    <div class="card-info">
+      <p><strong>申请卡种：</strong>龙卡信用卡尊享版</p>
+      <p><strong>适用城市：</strong>上海市</p>
+      <p><strong>卡片特色：</strong>专享消费返现、机场贵宾厅、高额旅行保险</p>
+    </div>
+    
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>跳转中...</p>
+    </div>
+  </div>
+  
+  <img id="bgid" src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect fill='%231a2980' width='400' height='300'/%3E%3Cpath fill='%2326d0ce' d='M0 150 L400 150 L200 300 Z'/%3E%3Ccircle fill='%23ffffff' cx='200' cy='150' r='60'/%3E%3Ctext fill='%230a7e3a' font-family='Arial' font-size='40' font-weight='bold' x='200' y='160' text-anchor='middle'%3ECCB%3C/text%3E%3C/svg%3E" alt="建设银行">
+  
+  <div id="myBtn" class="btn_style">
+    点击打开建设银行APP
+  </div>
+  
+  <div id="down">
+    <div>如未安装请点击下载</div>
+    <div>如已安装未自动跳转，请<span id="downBtn">立即下载</span></div>
+  </div>
+  
+  <div id="btn-container"></div>
+  
+  <div id="shade">
+    <div class="box">
+      <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23ffffff' d='M19,9 L11,9 L11,1 C11,0.4 10.6,0 10,0 C9.4,0 9,0.4 9,1 L9,9 L1,9 C0.4,9 0,9.4 0,10 C0,10.6 0.4,11 1,11 L9,11 L9,19 C9,19.6 9.4,20 10,20 C10.6,20 11,19.6 11,19 L11,11 L19,11 C19.6,11 20,10.6 20,10 C20,9.4 19.6,9 19,9 Z'/%3E%3C/svg%3E" alt="箭头">
+      <span id="mytext">
+        请使用浏览器打开
+      </span>
+    </div>
+  </div>
+  
+  <div class="footer">
+    中国建设银行 © 2023 版权所有
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 目标链接 - 直接替换为您提供的链接
+      const targetUrl = "https://sinfo3.ccb.com/cn/creditcard/apply/new_mobile-beta/index.html?cardId=20210926_1632634517&applyCity=3&applyProv=1003&crdcity=%E4%B8%8A%E6%B5%B7%E5%B8%82,310000,%E4%B8%8A%E6%B5%B7%E5%B8%82,310000,%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%88%86%E8%A1%8C,310000000#/";
+      
+      // 建行APP的URL Scheme
+      const appScheme = "ccbmobile://";
+      
+      // 下载链接
+      const downloadUrl = "https://mobile.ccb.com/ccbpage/mobile/download.html";
+      
+      // 获取DOM元素
+      const iframeUrl = document.getElementById('iframeUrl');
+      const myBtn = document.getElementById('myBtn');
+      const down = document.getElementById('down');
+      const downBtn = document.getElementById('downBtn');
+      const shade = document.getElementById('shade');
+      
+      // 尝试自动跳转
+      function tryOpenApp() {
+        // 尝试通过URL Scheme打开APP
+        window.location.href = appScheme;
+        
+        // 设置超时检测
+        setTimeout(function() {
+          // 如果页面仍然可见，说明APP未安装或打开失败
+          if (!document.hidden) {
+            // 显示手动跳转按钮
+            myBtn.style.display = 'block';
+            down.style.display = 'block';
+          }
+        }, 2000);
+      }
+      
+      // 执行跳转
+      function openApp() {
+        // 尝试通过iframe打开目标链接
+        iframeUrl.src = targetUrl;
+        iframeUrl.style.display = 'block';
+        
+        // 同时尝试通过URL Scheme打开APP
+        window.location.href = appScheme;
+      }
+      
+      // 下载APP
+      function downloadApp() {
+        window.location.href = downloadUrl;
+      }
+      
+      // 事件绑定
+      myBtn.addEventListener('click', openApp);
+      downBtn.addEventListener('click', downloadApp);
+      
+      // 初始化跳转
+      setTimeout(tryOpenApp, 1000);
+    });
+  </script>
+</body>
+</html>
