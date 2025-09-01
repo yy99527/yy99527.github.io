@@ -1,0 +1,1086 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商家券</title>
+<!--    <script th:src="@{/js/jquery-3.6.0.min.js}"></script>-->
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript">
+        window._AMapSecurityConfig = {
+            securityJsCode: 'bd3bbaf91b6954e85d4f55e64f2acfdd',
+        };
+    </script>
+    <script type="text/javascript"
+            src="https://webapi.amap.com/maps?v=1.4.15&key=5bcc552f9750129f47e2fcf529ae684f"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #mapContainer {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        #selectedLocation {
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .search-box {
+            flex-grow: 1;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            height: 44px;
+            transition: all 0.3s ease;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 2px 6px rgba(0, 123, 255, 0.25);
+        }
+
+        .search-box::placeholder {
+            color: #adb5bd;
+            font-style: italic;
+        }
+
+        .shops-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .shop-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background-color: #fafafa;
+        }
+
+        .shop-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
+
+        .shop-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .shop-coupon {
+            font-size: 14px;
+            color: #ff6b35;
+            margin-top: 4px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            font-size: 16px;
+            color: #007bff;
+            font-weight: 500;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+        }
+
+        #searchLocationBtn:hover {
+            background-color: #0056b3;
+        }
+
+        #searchLocationBtn:active {
+            background-color: #004080;
+        }
+
+        .search-result-item:hover {
+            background-color: #f0f8ff;
+        }
+
+        .search-result-item:first-child {
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .shop-item {
+                display: flex;
+                align-items: center;
+                padding: 15px;
+                border: 1px solid #eee;
+                border-radius: 4px;
+                background-color: #fafafa;
+            }
+
+            .shop-image {
+                width: 60px;
+                height: 60px;
+                object-fit: cover;
+                border-radius: 4px;
+                margin-right: 15px;
+            }
+
+            #mapContainer {
+                height: 250px;
+            }
+        }
+
+        /* 开关样式 */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        /* 圆形滑块 */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>商家券查询</h1>
+    <div id="mapContainer"></div>
+    <div id="selectedLocation">
+        <span>已选择位置: </span>
+        <span id="locationInfo"></span>
+    </div>
+
+    <!-- 搜索地址功能 -->
+    <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;">
+        <input type="text" id="locationSearch" class="search-box" placeholder="搜索地点">
+        <button id="searchLocationBtn"
+                style="padding: 12px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: 500; text-align: center; min-width: 80px; height: 44px; box-sizing: border-box;">
+            搜索
+        </button>
+    </div>
+    <div id="searchResults" style="margin-bottom: 20px; display: none;"></div>
+
+    <!-- 缓存控制和调用次数控制 -->
+    <div style="display: flex; gap: 5px; margin-bottom: 20px; align-items: center; flex-wrap: wrap;">
+        <button id="clearCacheBtn"
+                style="padding: 8px 12px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+            清除缓存
+        </button>
+        <button id="exportCacheBtn"
+                style="padding: 8px 12px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+            导出缓存
+        </button>
+        <input type="file" id="importCacheBtn" accept=".json" style="display: none;">
+        <label for="importCacheBtn"
+               style="padding: 8px 12px; background-color: #ffc107; color: black; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; display: inline-block;">导入缓存</label>
+        <!-- 添加刷新按钮 -->
+        <button id="refreshShopsBtn"
+                style="padding: 8px 12px; background-color: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+            加载商家
+        </button>
+        <!-- 暂时隐藏次数加减功能 -->
+        <div style="display: none;">
+            <button id="decrementBtn"
+                    style="padding: 8px 12px; background-color: #6c757d; color: white; border: none; border-radius: 4px 0 0 4px; cursor: pointer; font-size: 14px;">
+                -
+            </button>
+            <span id="callCount"
+                  style="padding: 8px 12px; background-color: #e9ecef; border-top: 1px solid #ced4da; border-bottom: 1px solid #ced4da; font-size: 14px;">0</span>
+            <button id="incrementBtn"
+                    style="padding: 8px 12px; background-color: #6c757d; color: white; border: none; border-radius: 0 4px 4px 0; cursor: pointer; font-size: 14px;">
+                +
+            </button>
+        </div>
+    </div>
+
+    <!-- 缓存开关 -->
+    <div style="display: flex; gap: 5px; margin-bottom: 20px; align-items: center;">
+        <label class="switch">
+            <input type="checkbox" id="useCacheSwitch">
+            <span class="slider round"></span>
+        </label>
+        <span style="font-size: 14px;">使用缓存加载</span>
+    </div>
+
+    <input type="text" id="searchInput" class="search-box" placeholder="请输入商家名称进行搜索">
+    <div id="shopsContainer" class="shops-container">
+        <!-- 商家信息将在这里显示 -->
+    </div>
+</div>
+
+<script>
+    // 缓存控制和调用次数变量
+    // 从缓存加载计数，默认为0
+    const CACHE_KEY = 'shopDataCache'; // 缓存键名
+
+    // 从本地存储加载缓存数据
+    const loadCacheData = function () {
+        const data = localStorage.getItem(CACHE_KEY);
+        if (!data) return {shops: [], queryCount: 0, useCache: false}; // 默认开启缓存
+
+        const parsedData = JSON.parse(data);
+        // Convert old format (array) to new format
+        if (Array.isArray(parsedData)) {
+            return {shops: parsedData, queryCount: 0, useCache: true};
+        }
+        // 确保useCache字段存在
+        if (parsedData.useCache === undefined) {
+            parsedData.useCache = false;
+        }
+        return parsedData;
+    }
+
+    let queryCount = loadCacheData()?.queryCount || 0; // 调用querySjq的次数
+
+    // 保存数据到本地存储
+    function saveCacheData(data) {
+        // 获取当前缓存开关状态
+        const useCache = $('#useCacheSwitch').is(':checked');
+        const cacheData = {
+            shops: data.shops || [],
+            queryCount: data.queryCount || 0,
+            useCache: useCache
+        };
+        localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+    }
+
+    // 合并新数据到缓存（相同名称覆盖，不同名称添加）
+    function mergeCacheData(newData, currentQueryCount) {
+        let cacheData = loadCacheData();
+        // 确保 cacheData 是数组
+        if (!Array.isArray(cacheData)) {
+            cacheData = cacheData.shops || [];
+        }
+        newData.forEach(newShop => {
+            const existingIndex = cacheData.findIndex(shop => shop.name === newShop.name);
+            if (existingIndex >= 0) {
+                // 覆盖现有商家数据
+                cacheData[existingIndex] = newShop;
+            } else {
+                // 添加新商家数据
+                cacheData.push(newShop);
+            }
+        });
+        saveCacheData({shops: cacheData, queryCount: currentQueryCount});
+        return cacheData;
+    }
+
+    // 清除缓存数据
+    function clearCacheData() {
+        const cachedData = loadCacheData();
+        const useCache = cachedData.useCache !== undefined ? cachedData.useCache : $('#useCacheSwitch').is(':checked');
+        localStorage.removeItem(CACHE_KEY);
+        // 重新保存缓存开关状态
+        saveCacheData({shops: [], queryCount: 0, useCache: false});
+        allShopsData = [];
+        queryCount = 0;
+        $('#callCount').text(queryCount);
+        $('#useCacheSwitch').prop('checked', false);
+        $('#shopsContainer').html('<div class="no-results">缓存已清除</div>');
+    }
+
+    // 导出缓存数据
+    function exportCacheData() {
+        let cacheData = loadCacheData();
+        // 确保 cacheData 是数组
+        if (!Array.isArray(cacheData)) {
+            cacheData = cacheData.shops || [];
+        }
+        if (cacheData.length === 0) {
+            alert('没有缓存数据可导出');
+            return;
+        }
+        const dataStr = JSON.stringify(cacheData, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(dataBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'shop_cache_' + new Date().toISOString().slice(0, 10) + '.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // 导入缓存数据
+    function importCacheData(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (Array.isArray(importedData)) {
+                    // 保存导入的数据到缓存
+                    saveCacheData({shops: importedData, queryCount: queryCount});
+                    allShopsData = importedData;
+                    const searchTerm = $('#searchInput').val();
+                    filterAndDisplayShops(allShopsData, searchTerm);
+                    alert('缓存导入成功，共导入 ' + importedData.length + ' 条数据');
+                } else {
+                    alert('导入失败：无效的数据格式');
+                }
+            } catch (error) {
+                alert('导入失败：' + error.message);
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // 页面加载时获取所有商家信息
+    $(document).ready(function () {
+        // 初始化地图
+        initMap(function () {
+            // 地图加载完成后执行
+            // 检查是否使用缓存加载
+            const cachedData = loadCacheData();
+            const useCache = cachedData.useCache !== undefined ? cachedData.useCache : $('#useCacheSwitch').is(':checked');
+
+            // 设置缓存开关的UI状态
+            $('#useCacheSwitch').prop('checked', useCache);
+
+            if (useCache) {
+                // 当缓存开关为开时，从缓存加载数据，不请求接口
+                if (cachedData) {
+                    allShopsData = cachedData.shops || [];
+                    queryCount = cachedData.queryCount || 0;
+                    $('#callCount').text(queryCount);
+                    const searchTerm = $('#searchInput').val();
+                    filterAndDisplayShops(allShopsData, searchTerm);
+                }
+                // 即使缓存中没有数据，也初始化地图
+                getCurrentLocationAndFetchShops();
+            } else {
+                // 不使用缓存，直接从服务器加载
+                // 获取当前位置并请求接口
+                getCurrentLocationAndFetchShops();
+            }
+        });
+
+        // 缓存控制按钮事件
+        $('#clearCacheBtn').click(clearCacheData);
+        $('#exportCacheBtn').click(exportCacheData);
+        $('#importCacheBtn').change(function (e) {
+            importCacheData(e.target.files[0]);
+            // 重置文件输入，允许重复选择同一文件
+            this.value = '';
+        });
+
+        // 数字加减按钮事件
+        $('#incrementBtn').click(function () {
+            queryCount++;
+            $('#callCount').text(queryCount);
+            saveCacheData({shops: allShopsData, queryCount: queryCount});
+        });
+        $('#decrementBtn').click(function () {
+            if (queryCount > 0) {
+                queryCount--;
+                $('#callCount').text(queryCount);
+                saveCacheData({shops: allShopsData, queryCount: queryCount});
+            }
+        });
+
+        // 缓存开关事件
+        $('#useCacheSwitch').change(function () {
+            const useCache = $(this).is(':checked');
+            if (!useCache) {
+                // 关闭缓存开关时，不清除当前显示的数据，但重置计数器
+                queryCount = 0;
+                $('#callCount').text(queryCount);
+            }
+            // 保存开关状态到缓存
+            saveCacheData({shops: allShopsData, queryCount: queryCount});
+        });
+
+        // 监听搜索框输入事件
+        $('#searchInput').on('input', function () {
+            const searchTerm = $(this).val();
+            fetchShops(searchTerm);
+        });
+
+        // 监听地图搜索按钮点击事件
+        $('#searchLocationBtn').on('click', function () {
+            const keyword = $('#locationSearch').val();
+            if (keyword) {
+                searchLocation(keyword);
+            }
+        });
+
+        // 监听回车键搜索
+        $('#locationSearch').on('keypress', function (e) {
+            if (e.which === 13) {
+                $('#searchLocationBtn').click();
+            }
+        });
+
+        // 监听滚动事件，实现下拉加载更多
+        $(window).on('scroll', function () {
+            // 如果正在加载，则不执行
+            if (isLoading) return;
+
+            // 检查是否滚动到页面底部
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+                isLoading = true;
+                loadMoreShops();
+            }
+        });
+        
+        // 添加刷新按钮点击事件
+        $('#refreshShopsBtn').on('click', function() {
+            console.log('刷新按钮被点击');
+            refreshShopsByButton();
+        });
+    });
+
+    // 按钮刷新商家数据
+    function refreshShopsByButton() {
+        console.log('refreshShopsByButton函数被调用');
+        
+        // 增加页码以获取下一页数据
+        currentPage++;
+        noMoreData = false;
+        // 不重置queryCount，保持当前计数以便携带gift_id参数
+        
+        // 重新获取商家数据（携带gift_id参数）
+        fetchShops($('#searchInput').val());
+    }
+    
+    // 搜索地点
+    function searchLocation(keyword) {
+        // 显示加载状态
+        $('#searchResults').html('<div class="loading"><div class="spinner"></div><div class="loading-text">搜索中...</div></div>').show();
+
+        // 获取当前地图中心点作为搜索中心
+        const center = map.getCenter();
+
+        // 使用高德地图POI搜索服务
+        AMap.service(['AMap.PlaceSearch'], function () {
+            const placeSearch = new AMap.PlaceSearch({
+                pageSize: 10,
+                pageIndex: 1,
+                citylimit: true,  // 限制在当前城市范围内搜索
+                map: map
+            });
+
+            // 根据地图中心点进行周边搜索
+            placeSearch.searchNearBy(keyword, [center.lng, center.lat], 5000, function (status, result) {
+                if (status === 'complete' && result.info === 'OK') {
+                    displaySearchResults(result.poiList.pois);
+                } else {
+                    $('#searchResults').html('<div class="no-results">未找到相关地点</div>').show();
+                }
+            });
+        });
+    }
+
+
+    // 显示搜索结果
+    function displaySearchResults(pois) {
+        if (!pois || pois.length === 0) {
+            $('#searchResults').html('<div class="no-results">未找到相关地点</div>').show();
+            return;
+        }
+
+        let resultsHtml = '<div style="background-color: white; border: 1px solid #ddd; border-radius: 4px; max-height: 300px; overflow-y: auto;">';
+
+        pois.forEach(function (poi, index) {
+            resultsHtml += `
+                    <div class="search-result-item" 
+                         style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;"
+                         data-lng="${poi.location.lng}"
+                         data-lat="${poi.location.lat}">
+                        <div style="font-weight: bold;">${poi.name}</div>
+                        <div style="font-size: 14px; color: #666;">${poi.address || '地址信息不详'}</div>
+                    </div>
+                `;
+        });
+
+        resultsHtml += '</div>';
+        $('#searchResults').html(resultsHtml).show();
+
+        // 为搜索结果项添加点击事件
+        $('.search-result-item').on('click', function () {
+            const lng = $(this).data('lng');
+            const lat = $(this).data('lat');
+            const name = $(this).find('div:first').text();
+
+            // 设置地图中心点
+            map.setCenter([lng, lat]);
+
+            // 显示选择的位置
+            $('#locationInfo').text(`${name} (纬度: ${lat.toFixed(6)}, 经度: ${lng.toFixed(6)})`);
+            $('#selectedLocation').show();
+
+            // 隐藏搜索结果
+            $('#searchResults').hide();
+
+            // 将经纬度传递给后端
+            sendLocationToBackend(lat, lng);
+        });
+    }
+
+    // 地图实例和标记
+    let map;
+    let marker = null;
+
+    // 初始化地图
+    function initMap(onLoadComplete) {
+        // 创建地图实例
+        map = new AMap.Map('mapContainer', {
+            zoom: 11,
+            center: [116.397428, 39.90923]  // 默认中心点为北京
+        });
+
+        // 添加地图加载完成事件监听
+        map.on('complete', function () {
+            console.log('地图加载完成');
+            if (typeof onLoadComplete === 'function') {
+                onLoadComplete();
+            }
+        });
+
+        // 添加地图插件
+        AMap.plugin([
+            'AMap.ToolBar',
+            'AMap.Scale',
+            'AMap.Geolocation'
+        ], function () {
+            map.addControl(new AMap.ToolBar());
+            map.addControl(new AMap.Scale());
+
+            // 添加定位插件
+            const geolocation = new AMap.Geolocation({
+                enableHighAccuracy: true,
+                timeout: 10000,
+                buttonPosition: 'RB',
+                buttonOffset: new AMap.Pixel(10, 20),
+                zoomToAccuracy: true
+            });
+
+            map.addControl(geolocation);
+
+        })
+
+
+        // 添加点击事件获取坐标
+        map.on('click', function (e) {
+            const latitude = e.lnglat.lat;
+            const longitude = e.lnglat.lng;
+
+            // 移除之前的标记
+            if (marker) {
+                map.remove(marker);
+            }
+
+            // 创建新标记
+            marker = new AMap.Marker({
+                position: [longitude, latitude],
+                map: map
+            });
+
+            // 显示选择的位置
+            $('#locationInfo').text(`纬度: ${latitude.toFixed(6)}, 经度: ${longitude.toFixed(6)}`);
+            $('#selectedLocation').show();
+
+            // 将经纬度传递给后端
+            sendLocationToBackend(latitude, longitude);
+        });
+    }
+
+
+    // 获取当前位置并请求商家信息
+    function getCurrentLocationAndFetchShops() {
+        // 获取定位插件
+        AMap.plugin(['AMap.Geolocation'], function () {
+            const geolocation = new AMap.Geolocation({
+                enableHighAccuracy: true,
+                timeout: 10000,
+                buttonPosition: 'RB',
+                buttonOffset: new AMap.Pixel(10, 20),
+                zoomToAccuracy: true
+            });
+
+            // 获取当前位置
+            geolocation.getCurrentPosition(function (status, result) {
+                if (status === 'complete') {
+                    // 定位成功
+                    const latitude = result.position.lat;
+                    const longitude = result.position.lng;
+
+                    // 设置地图中心点为当前位置
+                    map.setCenter([longitude, latitude]);
+
+                    // 显示位置信息
+                    $('#locationInfo').text(`纬度: ${latitude.toFixed(6)}, 经度: ${longitude.toFixed(6)}`);
+                    $('#selectedLocation').show();
+
+                    // 重置查询计数并请求商家数据
+                    queryCount = 0;
+                    fetchShops();
+                } else {
+                    // 定位失败
+                    console.log('定位失败：' + result.message);
+                    // 即使定位失败也请求商家数据
+                    fetchShops();
+                }
+            });
+        });
+    }
+
+    // 保存所有商家数据的本地副本
+    let allShopsData = [];
+
+    // 用于下拉加载的变量
+    let isLoading = false;
+    let noMoreData = false;  // 添加没有更多数据的标志
+    let userLocation = { lat: null, lng: null };  // 添加用户位置变量
+    let isPullingDown = false;  // 添加下拉刷新状态变量
+    let pullStartY = 0;  // 添加下拉起始位置变量
+    let pullDistance = 0;  // 添加下拉距离变量
+
+    // 获取商家信息
+    function fetchShops(searchTerm) {
+        // 获取当前选择的位置
+        const locationInfo = $('#locationInfo').text();
+        console.log('locationInfo:', locationInfo); // 调试信息
+        let latitude, longitude;
+
+        // 解析位置信息
+        if (locationInfo) {
+            const coords = locationInfo.split(',');
+            console.log('coords:', coords); // 调试信息
+            if (coords.length === 2) {
+                latitude = parseFloat(coords[0].split(':')[1].trim());
+                longitude = parseFloat(coords[1].split(':')[1].trim());
+                console.log('latitude:', latitude, 'longitude:', longitude); // 调试信息
+            }
+        }
+
+        // 构建请求参数
+        const params = {
+            latitude: latitude,
+            longitude: longitude,
+            page: currentPage  // 使用当前页码而不是重置为1
+        };
+        console.log('当前次数',queryCount)
+        // 根据调用次数决定是否添加gift_id参数
+        // 除了第一次请求（queryCount == 0）不携带gift_id，之后的请求（queryCount > 0）都传递gift_id
+        if (queryCount > 0 && window.currentGiftId) {
+            params.gift_id = window.currentGiftId;
+        }
+
+        // 显示加载动画，但不遮挡现有内容
+        $('#shopsContainer').prepend('<div id="loadingIndicator" class="loading"><div class="spinner"></div><div class="loading-text">加载中...</div></div>');
+
+        // 发送GET请求到querySjq接口，获取更多商家数据
+        let retryCount = 0;
+        const maxRetries = 20;
+        
+        function doRequest() {
+            // 使用fetch API替代jQuery的$.get方法
+            fetch('/querySjq?' + new URLSearchParams(params))
+                .then(response => {
+                    // 检查响应状态码，只有状态码为200时才继续处理
+                    if (response.status !== 200) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 移除加载动画
+                    $('#loadingIndicator').remove();
+                    
+                    // 检查是否有新数据
+                    if (data && Array.isArray(data) && data.length > 0) {
+                        // 合并新数据到缓存
+                        allShopsData = mergeCacheData(data, queryCount);
+
+                        // 增加调用次数并更新显示
+                        queryCount++;
+                        $('#callCount').text(queryCount);
+
+                        // 显示新数据在顶部
+                        displayShops(data, false);
+
+                        // 重置加载状态
+                        isLoading = false;
+                    } else {
+                        // 没有更多数据
+                        $('#shopsContainer').prepend('<div id="noMoreData" class="no-results">没有更多数据了</div>');
+                        setTimeout(function() {
+                            $('#noMoreData').remove();
+                        }, 3000);
+                    }
+                })
+                .catch(error => {
+                    
+                    retryCount++;
+                    if (retryCount <= maxRetries) {
+                        console.log(`获取商家信息失败，正在尝试第 ${retryCount} 次重新加载`);
+                        setTimeout(doRequest, 100); // 100ms后重试
+                    } else {
+                        console.log('获取商家信息失败');
+                        // 移除加载动画
+                        $('#loadingIndicator').remove();
+                        $('#shopsContainer').prepend('<div id="loadFailed" class="no-results">加载失败，请稍后重试</div>');
+                        setTimeout(function() {
+                            $('#loadFailed').remove();
+                        }, 2000);
+                    }
+                });
+        }
+        
+        // 开始请求
+        doRequest();
+    }
+
+    // 过滤并显示商家
+    function filterAndDisplayShops(shops, searchTerm) {
+        // 如果搜索词为空，显示所有商家
+        if (!searchTerm) {
+            displayShops(shops);
+            return;
+        }
+
+        // 本地过滤商家数据
+        const filteredShops = shops.filter(function (shop) {
+            return shop.name && shop.name.toLowerCase().includes(searchTerm.toLowerCase());
+        });
+
+        displayShops(filteredShops);
+    }
+
+    // 将位置信息发送到后端并更新商家数据
+    function sendLocationToBackend(latitude, longitude) {
+        console.log('Sending location to backend:', latitude, longitude);
+        
+        // 显示加载状态
+        $('#shopsContainer').html('<div class="loading"><div class="spinner"></div><div class="loading-text">加载中...</div></div>');
+        
+        // 重置查询次数
+        queryCount = 0;
+        
+        // 重置缓存数据
+        allShopsData = [];
+        
+        // 重置当前页码
+        currentPage = 1;
+        
+        // 构建请求参数
+        const params = {
+            latitude: latitude,
+            longitude: longitude,
+            page: 1  // 从第一页开始
+        };
+        
+        let retryCount = 0;
+        const maxRetries = 10;
+        
+        function doRequest() {
+            // 使用fetch API发送位置信息到后端，使用GET方法
+            fetch('/querySjq?' + new URLSearchParams(params))
+            .then(response => {
+                // 检查响应状态码，只有状态码为200时才继续处理
+                if (response.status !== 200) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Location sent successfully:', data);
+                
+                // 移除加载状态
+                $('#shopsContainer').empty();
+                
+                // 检查是否有数据
+                if (data && Array.isArray(data) && data.length > 0) {
+                    // 更新缓存数据
+                    allShopsData = data;
+                    
+                    // 增加调用次数并更新显示
+                    queryCount++;
+                    $('#callCount').text(queryCount);
+                    
+                    // 显示商家信息
+                    displayShops(data, false);
+                } else {
+                    // 没有数据
+                    $('#shopsContainer').html('<div class="no-results">没有找到相关数据</div>');
+                }
+            })
+            .catch(error => {
+                retryCount++;
+                if (retryCount <= maxRetries) {
+                    console.log(`发送位置信息失败，正在尝试第 ${retryCount} 次重新加载`);
+                    setTimeout(doRequest, 100); // 100ms后重试
+                } else {
+                    console.log('发送位置信息失败');
+                    $('#shopsContainer').html('<div class="no-results">加载失败，请稍后重试</div>');
+                }
+            });
+        }
+        
+        // 开始请求
+        doRequest();
+    }
+
+    // 显示商家信息
+    function displayShops(shops, append = false) {
+        const container = $('#shopsContainer');
+
+        // 如果不是追加模式，则清空容器
+        if (!append) {
+            container.empty();
+        }
+
+        // 检查是否有商家数据
+        if (!shops || shops.length === 0) {
+            if (!append) {
+                container.html('<div class="no-results">暂无商家信息</div>');
+            }
+            return;
+        }
+
+        // 检查第一个商家是否有gift_id，如果有则保存到全局变量
+        if (shops[0] && shops[0].gift_id) {
+            window.currentGiftId = shops[0].gift_id;
+        }
+
+        // 遍历商家数据并生成HTML
+        shops.forEach(function (shop) {
+            const shopUrl = shop.url || '#';
+            const shopElement = `
+                    <a href="${shopUrl}" target="_blank" rel="noopener" style="text-decoration: none; color: inherit;" class="shop-link" data-url="${shopUrl}">
+                        <div class="shop-item">
+                            <img src="${shop.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iMzAiIHk9IjMwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lIGFsaWdubWVudD0iY2VudHJhbCI+SW1hZ2U8L3RleHQ+PC9zdmc+'}" 
+                                 alt="${shop.name}" 
+                                 class="shop-image" 
+                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iMzAiIHk9IjMwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lIGFsaWdubWVudD0iY2VudHJhbCI+SW1hZ2U8L3RleHQ+PC9zdmc+';">
+                            <div>
+                                <div class="shop-name">${shop.name || '未知商家'}</div>
+                                <div class="shop-coupon">满${(shop.order_amount_limit / 100).toFixed(2)}减${(shop.coupon_amount / 100).toFixed(2)}</div>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            container.append(shopElement);
+        });
+
+        // 为店铺链接添加点击事件处理器，确保在移动设备上正确打开新窗口
+        $('.shop-link').on('click', function (e) {
+            // 阻止默认的链接跳转行为
+            e.preventDefault();
+
+            // 获取链接URL
+            const url = $(this).data('url');
+
+            // 如果URL有效，则在新窗口中打开
+            if (url && url !== '#') {
+                // 使用window.open方法打开链接，指定在新窗口或标签页中打开
+                const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+
+                // 确保opener为null以提高安全性
+                if (newWindow) {
+                    newWindow.opener = null;
+                }
+            }
+        });
+    }
+
+    // 当前页码
+    let currentPage = 1;
+
+    // 加载更多商家数据
+    function loadMoreShops() {
+        // 如果正在加载或没有更多数据，则不执行任何操作
+        if (isLoading || noMoreData) return;
+
+        // 设置加载状态
+        isLoading = true;
+
+        // 显示加载动画
+        $('#shopsContainer').append('<div id="loadMoreSpinner" class="loading"><div class="spinner"></div><div class="loading-text">加载中...</div></div>');
+
+        // 构建请求参数
+        const params = {
+            latitude: userLocation.lat,
+            longitude: userLocation.lng,
+            page: currentPage + 1  // 请求下一页数据
+        };
+
+        // 如果有当前gift_id，也附加到参数中
+        if (window.currentGiftId) {
+            params.gift_id = window.currentGiftId;
+        }
+
+        // 发送GET请求到querySjq接口，获取更多商家数据
+        let retryCount = 0;
+        const maxRetries = 10;
+        
+        function doRequest() {
+            // 使用fetch API替代jQuery的$.get方法
+            fetch('/querySjq?' + new URLSearchParams(params))
+                .then(response => {
+                    // 检查响应状态码，只有状态码为200时才继续处理
+                    if (response.status !== 200) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 移除加载状态
+                    $('#loadMoreSpinner').remove();
+
+                    // 检查是否有新数据
+                    if (data && Array.isArray(data) && data.length > 0) {
+                        // 合并新数据到缓存
+                        allShopsData = mergeCacheData(data, queryCount);
+
+                        // 增加调用次数并更新显示
+                        queryCount++;
+                        $('#callCount').text(queryCount);
+
+                        // 显示新数据
+                        displayShops(data, true);
+
+                        // 更新当前页码
+                        currentPage++;
+
+                        // 重置加载状态
+                        isLoading = false;
+                    } else {
+                        // 没有更多数据
+                        $('#shopsContainer').append('<div class="no-results">没有更多数据了</div>');
+                        noMoreData = true; // 设置没有更多数据标志
+                    }
+                })
+                .catch(error => {
+                    retryCount++;
+                    if (retryCount <= maxRetries) {
+                        console.log(`加载更多数据失败，正在尝试第 ${retryCount} 次重新加载`);
+                        setTimeout(doRequest, 100); // 100ms后重试
+                    } else {
+                        // 移除加载状态
+                        $('#loadMoreSpinner').remove();
+                        $('#shopsContainer').append('<div class="no-results">加载失败，请稍后重试</div>');
+                        isLoading = false; // 重置加载状态
+                    }
+                });
+        }
+        
+        // 开始请求
+        doRequest();
+    }
+</script>
+</body>
+</html>
