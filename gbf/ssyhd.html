@@ -129,6 +129,52 @@
             border-left-color: #4CAF50;
         }
         
+        .poster-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .poster-image {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .poster-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
+            transition: opacity 0.3s;
+        }
+        
+        .image-loading {
+            opacity: 0.5;
+            filter: blur(2px);
+        }
+        
+        .image-caption {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 10px 20px 20px;
+            flex-wrap: wrap;
+        }
+        
         .copy-btn {
             background: linear-gradient(135deg, #4CAF50, #388E3C);
             color: white;
@@ -137,18 +183,18 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
-            margin: 10px 20px 20px;
             transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+            text-decoration: none;
         }
         
         .copy-btn:hover {
-            background: linear-gradient(135deg, #388E3C, #2E7D32);
             transform: translateY(-2px);
             box-shadow: 0 5px 8px rgba(0,0,0,0.15);
+            background: linear-gradient(135deg, #388E3C, #2E7D32);
         }
         
         .copy-btn:active {
@@ -160,7 +206,6 @@
             top: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(135deg, #4CAF50, #388E3C);
             color: white;
             padding: 12px 24px;
             border-radius: 6px;
@@ -169,6 +214,7 @@
             transition: opacity 0.3s;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             font-weight: bold;
+            background: linear-gradient(135deg, #4CAF50, #388E3C);
         }
         
         .activity-number {
@@ -205,6 +251,21 @@
             border-top: 1px dashed #ddd;
         }
         
+        .loading-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 20px 15px;
@@ -220,6 +281,14 @@
             
             .logo {
                 max-width: 150px;
+            }
+            
+            .poster-images {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
             }
         }
     </style>
@@ -263,7 +332,31 @@
 ⏰活动时间：11.1-11.11，机会有限，抽完即止！
 （👇点击下方位置信息，一键导航到店👇）</div>
             
-            <button class="copy-btn" data-activity="1">📋 一键复制活动一文案</button>
+            <!-- 海报图片区域 - 活动一有两张图片 -->
+            <div class="poster-images">
+                <div class="poster-image">
+                    <!-- 使用三重通道图片加载 -->
+                    <img id="poster1-1" 
+                         data-src-v4="https://alist.zzmm.us.kg:24541/d/%E5%BF%83%E6%9C%89%E7%81%B5%E7%8A%80/%E6%B0%B4%E6%9E%9C%E8%B5%84%E6%96%99%E6%96%87%E4%BB%B6%E5%A4%B9/%E7%B4%A0%E6%9D%90%E8%B5%84%E6%96%99/%E4%BA%A7%E5%93%81%E8%B5%84%E6%96%99%E5%BA%93/%E5%8F%8C%E5%8D%81%E4%B8%80%E6%B4%BB%E5%8A%A8%E6%B5%B7%E6%8A%A5/ssy1.jpg?sign=NtX_gytPlKNwBR1S-fgVA-IicMJ4bcJaYZ7xbK4ieYg=:0" 
+                         data-src-v6="https://alist.zzmm.us.kg:8888/d/%E5%BF%83%E6%9C%89%E7%81%B5%E7%8A%80/%E6%B0%B4%E6%9E%9C%E8%B5%84%E6%96%99%E6%96%87%E4%BB%B6%E5%A4%B9/%E7%B4%A0%E6%9D%90%E8%B5%84%E6%96%99/%E4%BA%A7%E5%93%81%E8%B5%84%E6%96%99%E5%BA%93/%E5%8F%8C%E5%8D%81%E4%B8%80%E6%B4%BB%E5%8A%A8%E6%B5%B7%E6%8A%A5/ssy1.jpg?sign=NtX_gytPlKNwBR1S-fgVA-IicMJ4bcJaYZ7xbK4ieYg=:0" 
+                         data-src-local="ssy1.jpg"
+                         alt="王牌水果盲盒海报1">
+                    <div class="image-caption">王牌水果盲盒海报1</div>
+                </div>
+                <div class="poster-image">
+                    <!-- 使用三重通道图片加载 -->
+                    <img id="poster1-2" 
+                         data-src-v4="https://alist.zzmm.us.kg:24541/d/%E5%BF%83%E6%9C%89%E7%81%B5%E7%8A%80/%E6%B0%B4%E6%9E%9C%E8%B5%84%E6%96%99%E6%96%87%E4%BB%B6%E5%A4%B9/%E7%B4%A0%E6%9D%90%E8%B5%84%E6%96%99/%E4%BA%A7%E5%93%81%E8%B5%84%E6%96%99%E5%BA%93/%E5%8F%8C%E5%8D%81%E4%B8%80%E6%B4%BB%E5%8A%A8%E6%B5%B7%E6%8A%A5/ssy2.jpg?sign=gJ-qP--8xxxtbcgDEVvVTONeEIc0ev5SjeGAAKbzEEw=:0" 
+                         data-src-v6="https://alist.zzmm.us.kg:8888/d/%E5%BF%83%E6%9C%89%E7%81%B5%E7%8A%80/%E6%B0%B4%E6%9E%9C%E8%B5%84%E6%96%99%E6%96%87%E4%BB%B6%E5%A4%B9/%E7%B4%A0%E6%9D%90%E8%B5%84%E6%96%99/%E4%BA%A7%E5%93%81%E8%B5%84%E6%96%99%E5%BA%93/%E5%8F%8C%E5%8D%81%E4%B8%80%E6%B4%BB%E5%8A%A8%E6%B5%B7%E6%8A%A5/ssy2.jpg?sign=gJ-qP--8xxxtbcgDEVvVTONeEIc0ev5SjeGAAKbzEEw=:0" 
+                         data-src-local="ssy2.jpg"
+                         alt="王牌水果盲盒海报2">
+                    <div class="image-caption">王牌水果盲盒海报2</div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="copy-btn" data-activity="1">📋 一键复制文案</button>
+            </div>
         </div>
         
         <div class="activity">
@@ -289,7 +382,22 @@
 ⏰活动时间：11.8 - 11.11
 （👇点击下方位置信息，一键导航到店👇）</div>
             
-            <button class="copy-btn" data-activity="2">📋 一键复制活动二文案</button>
+            <!-- 海报图片区域 - 活动二有一张图片 -->
+            <div class="poster-images">
+                <div class="poster-image">
+                    <!-- 使用三重通道图片加载 -->
+                    <img id="poster2-1" 
+                         data-src-v4="https://alist.zzmm.us.kg:24541/d/%E5%BF%83%E6%9C%89%E7%81%B5%E7%8A%80/%E6%B0%B4%E6%9E%9C%E8%B5%84%E6%96%99%E6%96%87%E4%BB%B6%E5%A4%B9/%E7%B4%A0%E6%9D%90%E8%B5%84%E6%96%99/%E4%BA%A7%E5%93%81%E8%B5%84%E6%96%99%E5%BA%93/%E5%8F%8C%E5%8D%81%E4%B8%80%E6%B4%BB%E5%8A%A8%E6%B5%B7%E6%8A%A5/ssy3.jpg?sign=rmUCspW1BKVTMxc1IlPphXIWc_JtQ9jhAmsANDI0eQU=:0" 
+                         data-src-v6="https://alist.zzmm.us.kg:8888/d/%E5%BF%83%E6%9C%89%E7%81%B5%E7%8A%80/%E6%B0%B4%E6%9E%9C%E8%B5%84%E6%96%99%E6%96%87%E4%BB%B6%E5%A4%B9/%E7%B4%A0%E6%9D%90%E8%B5%84%E6%96%99/%E4%BA%A7%E5%93%81%E8%B5%84%E6%96%99%E5%BA%93/%E5%8F%8C%E5%8D%81%E4%B8%80%E6%B4%BB%E5%8A%A8%E6%B5%B7%E6%8A%A5/ssy3.jpg?sign=rmUCspW1BKVTMxc1IlPphXIWc_JtQ9jhAmsANDI0eQU=:0" 
+                         data-src-local="ssy3.jpg"
+                         alt="水果叠叠乐海报">
+                    <div class="image-caption">水果叠叠乐活动海报</div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="copy-btn" data-activity="2">📋 一键复制文案</button>
+            </div>
         </div>
         
         <div class="activity">
@@ -322,7 +430,22 @@
 ⏰活动时限：2025年11月8日 - 11月11日
 （👇点击一键导航，今天就来锁定双重福利！👇）</div>
             
-            <button class="copy-btn" data-activity="3">📋 一键复制活动三文案</button>
+            <!-- 海报图片区域 - 活动三有一张图片 -->
+            <div class="poster-images">
+                <div class="poster-image">
+                    <!-- 使用三重通道图片加载 -->
+                    <img id="poster3-1" 
+                         data-src-v4="https://alist.zzmm.us.kg:24541/d/%E5%BF%83%E6%9C%89%E7%81%B5%E7%8A%80/%E6%B0%B4%E6%9E%9C%E8%B5%84%E6%96%99%E6%96%87%E4%BB%B6%E5%A4%B9/%E7%B4%A0%E6%9D%90%E8%B5%84%E6%96%99/%E4%BA%A7%E5%93%81%E8%B5%84%E6%96%99%E5%BA%93/%E5%8F%8C%E5%8D%81%E4%B8%80%E6%B4%BB%E5%8A%A8%E6%B5%B7%E6%8A%A5/ssy4.jpg?sign=eaJ05fvnxm5ZpFe-gJNQ3pPmnRkTlV9aWOolDvkW7zI=:0" 
+                         data-src-v6="https://alist.zzmm.us.kg:8888/d/%E5%BF%83%E6%9C%89%E7%81%B5%E7%8A%80/%E6%B0%B4%E6%9E%9C%E8%B5%84%E6%96%99%E6%96%87%E4%BB%B6%E5%A4%B9/%E7%B4%A0%E6%9D%90%E8%B5%84%E6%96%99/%E4%BA%A7%E5%93%81%E8%B5%84%E6%96%99%E5%BA%93/%E5%8F%8C%E5%8D%81%E4%B8%80%E6%B4%BB%E5%8A%A8%E6%B5%B7%E6%8A%A5/ssy4.jpg?sign=eaJ05fvnxm5ZpFe-gJNQ3pPmnRkTlV9aWOolDvkW7zI=:0" 
+                         data-src-local="ssy4.jpg"
+                         alt="储值红利海报">
+                    <div class="image-caption">储值红利活动海报</div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="copy-btn" data-activity="3">📋 一键复制文案</button>
+            </div>
         </div>
         
         <div class="footer">
@@ -363,7 +486,7 @@
                 // 使用现代剪贴板API
                 if (navigator.clipboard && window.isSecureContext) {
                     navigator.clipboard.writeText(textToCopy).then(() => {
-                        showCopyNotice();
+                        showNotice(copyNotice);
                     }).catch(err => {
                         useFallbackCopy(textToCopy);
                     });
@@ -383,16 +506,80 @@
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                showCopyNotice();
+                showNotice(copyNotice);
             }
             
-            // 显示复制成功提示
-            function showCopyNotice() {
-                copyNotice.style.opacity = '1';
+            // 显示通知
+            function showNotice(noticeElement) {
+                noticeElement.style.opacity = '1';
                 setTimeout(() => {
-                    copyNotice.style.opacity = '0';
+                    noticeElement.style.opacity = '0';
                 }, 2000);
             }
+            
+            // 三重通道图片加载功能
+            function loadTripleChannelImages() {
+                const images = document.querySelectorAll('img[data-src-v4]');
+                
+                images.forEach(img => {
+                    const v4Src = img.getAttribute('data-src-v4');
+                    const v6Src = img.getAttribute('data-src-v6');
+                    const localSrc = img.getAttribute('data-src-local');
+                    
+                    // 添加加载中样式
+                    img.classList.add('image-loading');
+                    
+                    // 先尝试加载IPv4地址
+                    const tempImgV4 = new Image();
+                    tempImgV4.src = v4Src;
+                    
+                    tempImgV4.onload = function() {
+                        // IPv4加载成功
+                        img.src = v4Src;
+                        img.classList.remove('image-loading');
+                        console.log(`图片 ${v4Src} 通过IPv4加载成功`);
+                    };
+                    
+                    tempImgV4.onerror = function() {
+                        // IPv4加载失败，切换到IPv6
+                        console.log(`IPv4地址加载失败，切换到IPv6: ${v6Src}`);
+                        
+                        const tempImgV6 = new Image();
+                        tempImgV6.src = v6Src;
+                        
+                        tempImgV6.onload = function() {
+                            // IPv6加载成功
+                            img.src = v6Src;
+                            img.classList.remove('image-loading');
+                            console.log(`图片 ${v6Src} 通过IPv6加载成功`);
+                        };
+                        
+                        tempImgV6.onerror = function() {
+                            // IPv6加载失败，切换到本地
+                            console.log(`IPv6地址加载失败，切换到本地: ${localSrc}`);
+                            
+                            const tempImgLocal = new Image();
+                            tempImgLocal.src = localSrc;
+                            
+                            tempImgLocal.onload = function() {
+                                // 本地加载成功
+                                img.src = localSrc;
+                                img.classList.remove('image-loading');
+                                console.log(`图片 ${localSrc} 通过本地加载成功`);
+                            };
+                            
+                            tempImgLocal.onerror = function() {
+                                // 所有加载方式都失败
+                                img.classList.remove('image-loading');
+                                console.error(`所有图片源均加载失败: ${v4Src}, ${v6Src}, ${localSrc}`);
+                            };
+                        };
+                    };
+                });
+            }
+            
+            // 页面加载完成后自动加载三重通道图片
+            loadTripleChannelImages();
         });
     </script>
 </body>
