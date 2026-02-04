@@ -30,7 +30,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTUwIDE1MEM1MCAxMjIuMzg2IDcyLjM4NiAxMDAgMTAwIDEwMEMxMjcuNjE0IDEwMCAxNTAgMTIyLjM4NiAxNTAgMTUwQzE1MCAxNzcuNjE0IDEyNy42MTQgMjAwIDEwMCAyMEM3Mi4zODYgMjAwIDUwIDE3Ny42MTQgNTAgMTUwWiIgZmlsbD0icmdiYSgyNTUsMjMwLDIzMCwwLjEpIi8+PHBhdGggZD0iTTEwMCAxMzBDMTAwIDE0Ni41NjkgMTE2LjU2OSAxNjAgMTMwIDE2MEMxNDMuNDMxIDE2MCAxNjAgMTQ2LjU2OSAxNjAgMTMwQzE2MCAxMTMuNDMxIDE0My40MzEgMTAwIDEzMCAxMEMxMTYuNTY5IDEwMCAxMDAgMTEzLjQzMSAxMDAgMTMwWiIgZmlsbD0icmdiYSgyNTUsMjIwLDIyMCwwLjA4KSIvPjxwYXRoIGQ9Ik03MCAxMTBDNzAgMTAzLjM3MiA3Ni4zNzIgOTcgODMgOTdDODkuNjI4IDk3IDk2IDEwMy4zNzIgOTYgMTEwQzk2IDExNi42MjggODkuNjI4IDEyMyA4MyAxMjNDNzYuMzcyIDEyMyA3MCAxMTYuNjI4IDcwIDExMFoiIGZpbGw9InJnYmEoMjU1LDIxMCwyMTAsMC4xKSIvPjwvc3ZnPg==');
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTUwIDE1MEM1MCAxMjIuMzg2IDcy4zODYgMTAwIDEwMCAxMDBMMTI3LjYxNCAxMDAgMTUwIDEyMi4zODYgMTUwIDE1MEMxNTAgMTc3LjYxNCAxMjcuNjE0IDIwMCAxMDAgMjBMNzIuMzg2IDIwMCA1MCAxNzcuNjE0IDUwIDE1MFoiIGZpbGw9InJnYmEoMjU1LDIzMCwyMzAsMC4xKSIvPjxwYXRoIGQ9Ik0xMDAgMTMwQzEwMCAxNDYuNTY5IDExNi41NjkgMTYwIDEzMCAxNjBMMTQzLjQzMSAxNjAgMTYwIDE0Ni41NjkgMTYwIDEzMEMxNjAgMTEzLjQzMSAxNDMuNDMxIDEwMCAxMzAgMTBMMTE2LjU2OSAxMDAgMTAwIDExMy40MzEgMTAwIDEzMFoiIGZpbGw9InJnYmEoMjU1LDIyMCwyMjAsMC4wOCkiLz48cGF0aCBkPSJNNzAgMTEwQzcwIDEwMy4zNzIgNzYuMzcyIDk3IDgzIDk3TDg5LjYyOCA5NyA5NiAxMDMuMzcyIDk2IDExMEM5NiAxMTYuNjI4IDg5LjYyOCAxMjMgODMgMTIzTDc2LjM3MiAxMjMgNzAgMTE2LjYyOCA3MCAxMTBaIiBmaWxsPSJyZ2JhKDI1NSwyMTAsMjEwLDAuMSkiLz48L3N2Zz4=');
             background-size: 200px;
             opacity: 0.6;
             z-index: -1;
@@ -432,19 +432,53 @@
         
         .image-preview-content {
             max-width: 95%;
-            max-height: 85%;
+            max-height: 80vh;
             margin-bottom: 20px;
             border: 3px solid #fbbf24;
             border-radius: 10px;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
             background-color: white;
+            display: flex;
+            flex-direction: column;
         }
         
         .preview-image {
             width: 100%;
             height: auto;
             display: block;
+        }
+        
+        /* 图片滚动提示 */
+        .scroll-hint {
+            text-align: center;
+            color: #fbbf24;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            display: none;
+        }
+        
+        /* 滚动条样式 */
+        .image-preview-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .image-preview-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        
+        .image-preview-content::-webkit-scrollbar-thumb {
+            background: #fbbf24;
+            border-radius: 4px;
+        }
+        
+        .image-preview-content::-webkit-scrollbar-thumb:hover {
+            background: #d97706;
         }
         
         .preview-instructions {
@@ -664,6 +698,7 @@
         </div>
         <div class="image-preview-content">
             <img class="preview-image" id="preview-image" src="" alt="营业时间表预览">
+            <div class="scroll-hint" id="scroll-hint">↑ 可上下滚动查看完整图片 ↑</div>
         </div>
         <div class="mobile-instruction">长按图片即可保存到手机相册</div>
         <button class="close-preview-btn" id="close-preview-btn">关闭预览</button>
@@ -1003,9 +1038,21 @@
         function showImagePreview(imageDataUrl) {
             const previewModal = document.getElementById('image-preview-modal');
             const previewImage = document.getElementById('preview-image');
+            const scrollHint = document.getElementById('scroll-hint');
             
             // 设置图片源
             previewImage.src = imageDataUrl;
+            
+            // 图片加载完成后检查是否需要显示滚动提示
+            previewImage.onload = function() {
+                // 如果图片高度超过容器高度，显示滚动提示
+                const container = document.querySelector('.image-preview-content');
+                if (previewImage.height > container.clientHeight) {
+                    scrollHint.style.display = 'block';
+                } else {
+                    scrollHint.style.display = 'none';
+                }
+            };
             
             // 显示模态框
             previewModal.style.display = 'flex';
