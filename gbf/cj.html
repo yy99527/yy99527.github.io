@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>果缤纷水果店春节营业时间表</title>
+    <!-- 引入html2canvas库，使用更稳定的版本 -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', 'STKaiti', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #fff5f5 0%, #fff9e6 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* 马年装饰背景 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTUwIDE1MEM1MCAxMjIuMzg2IDcyLjM4NiAxMDAgMTAwIDEwMEMxMjcuNjE0IDEwMCAxNTAgMTIyLjM4NiAxNTAgMTUwQzE1MCAxNzcuNjE0IDEyNy42MTQgMjAwIDEwMCAyMEM3Mi4zODYgMjAwIDUwIDE3Ny42MTQgNTAgMTUwWiIgZmlsbD0icmdiYSgyNTUsMjMwLDIzMCwwLjEpIi8+PHBhdGggZD0iTTEwMCAxMzBDMTAwIDE0Ni41NjkgMTE2LjU2OSAxNjAgMTMwIDE2MEMxNDMuNDMxIDE2MCAxNjAgMTQ2LjU2OSAxNjAgMTMwQzE2MCAxMTMuNDMxIDE0My40MzEgMTAwIDEzMCAxMEMxMTYuNTY5IDEwMCAxMDAgMTEzLjQzMSAxMDAgMTMwWiIgZmlsbD0icmdiYSgyNTUsMjIwLDIyMCwwLjA4KSIvPjxwYXRoIGQ9Ik03MCAxMTBDNzAgMTAzLjM3MiA3Ni4zNzIgOTcgODMgOTdDODkuNjI4IDk3IDk2IDEwMy4zNzIgOTYgMTEwQzk2IDExNi42MjggODkuNjI4IDEyMyA4MyAxMjNDNzYuMzcyIDEyMyA3MCAxMTYuNjI4IDcwIDExMFoiIGZpbGw9InJnYmEoMjU1LDIxMCwyMTAsMC4xKSIvPjwvc3ZnPg==');
+            background-size: 200px;
+            opacity: 0.6;
+            z-index: -1;
+        }
+        
+        /* 马年装饰元素 */
+        .horse-decoration {
+            position: fixed;
+            font-size: 120px;
+            color: rgba(220, 38, 38, 0.08);
+            z-index: -1;
+        }
+        
+        .horse-1 {
+            top: 10%;
+            left: 5%;
+            transform: rotate(-15deg);
+        }
+        
+        .horse-2 {
+            bottom: 10%;
+            right: 5%;
+            transform: rotate(15deg);
+        }
+        
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+        
+        .calendar-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.15);
+            padding: 25px;
+            width: 100%;
+            border: 3px solid #dc2626;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        /* 顶部红色装饰条 */
+        .calendar-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #dc2626 0%, #fbbf24 50%, #dc2626 100%);
+        }
+        
+        /* Logo区域 - 长方形 */
+        .logo-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-bottom: 2px dashed #fbbf24;
+        }
+        
+        .logo-placeholder {
+            width: 100%;
+            max-width: 300px;
+            height: 100px;
+            border: 2px solid #dc2626;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(255, 251, 235, 0.8);
+            overflow: hidden;
+        }
+        
+        .logo-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .logo-placeholder .logo-text {
+            color: #dc2626;
+            font-size: 16px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        /* 标题区域 */
+        .title-section {
+            text-align: center;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .title-section h1 {
+            font-size: 2.2rem;
+            color: #dc2626;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px rgba(251, 191, 36, 0.3);
+            position: relative;
+            display: inline-block;
+            padding: 0 20px;
+        }
+        
+        .title-section h1::before, .title-section h1::after {
+            content: "✨";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.3rem;
+        }
+        
+        .title-section h1::before {
+            left: -10px;
+        }
+        
+        .title-section h1::after {
+            right: -10px;
+        }
+        
+        .editable-store-name {
+            background-color: rgba(255, 247, 213, 0.8);
+            border: 2px dashed #fbbf24;
+            border-radius: 8px;
+            padding: 5px 15px;
+            color: #b91c1c;
+            font-weight: bold;
+            min-width: 80px;
+            display: inline-block;
+            cursor: text;
+            transition: all 0.3s;
+        }
+        
+        .editable-store-name:focus {
+            outline: none;
+            background-color: #fff;
+            border: 2px solid #dc2626;
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #b45309;
+            font-style: italic;
+        }
+        
+        /* 操作按钮区域 */
+        .action-section {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(220, 38, 38, 0.3);
+        }
+        
+        .action-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .action-btn i {
+            font-size: 1.2rem;
+        }
+        
+        .action-btn.reset-btn {
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+        }
+        
+        .month-year {
+            font-size: 1.8rem;
+            color: #dc2626;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+            background: linear-gradient(90deg, #dc2626, #fbbf24, #dc2626);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0 20px;
+        }
+        
+        .month-year::before, .month-year::after {
+            content: "🐎";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.3rem;
+        }
+        
+        .month-year::before {
+            left: -5px;
+        }
+        
+        .month-year::after {
+            right: -5px;
+        }
+        
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .weekday {
+            text-align: center;
+            font-weight: bold;
+            color: #dc2626;
+            padding: 10px 0;
+            background-color: rgba(254, 226, 226, 0.7);
+            border-radius: 8px;
+            border: 1px solid #fecaca;
+            font-size: 0.95rem;
+        }
+        
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        
+        .day {
+            background-color: #fef2f2;
+            border-radius: 10px;
+            padding: 10px 3px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            border: 2px solid transparent;
+            min-height: 95px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+        
+        .day:hover {
+            background-color: #fee2e2;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(220, 38, 38, 0.2);
+        }
+        
+        .day-number {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 3px;
+            color: #1f2937;
+        }
+        
+        .day-lunar {
+            font-size: 0.75rem;
+            color: #dc2626;
+            margin-bottom: 3px;
+            font-weight: 500;
+        }
+        
+        .day-special {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #b45309;
+            margin-bottom: 5px;
+            padding: 2px 6px;
+            background-color: rgba(251, 191, 36, 0.3);
+            border-radius: 15px;
+            display: inline-block;
+            border: 1px solid #fbbf24;
+        }
+        
+        .day-status {
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 5px 8px;
+            border-radius: 6px;
+            margin-top: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .status-open {
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #86efac;
+            box-shadow: 0 2px 4px rgba(21, 128, 61, 0.2);
+        }
+        
+        .status-closed {
+            background-color: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fca5a5;
+            box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+        }
+        
+        .day.weekend {
+            background-color: #fff7ed;
+            border: 2px solid #fed7aa;
+        }
+        
+        .day.weekend .day-number {
+            color: #ea580c;
+        }
+        
+        .day.closed-day {
+            background-color: #fef2f2;
+            border: 2px solid #fecaca;
+        }
+        
+        .day-status:hover {
+            transform: scale(1.05);
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed #fbbf24;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            background-color: #fffbeb;
+            padding: 6px 12px;
+            border-radius: 15px;
+            border: 1px solid #fbbf24;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        
+        .legend-open {
+            background-color: #dcfce7;
+            border: 1px solid #86efac;
+        }
+        
+        .legend-closed {
+            background-color: #fee2e2;
+            border: 1px solid #fca5a5;
+        }
+        
+        .legend-weekend {
+            background-color: #fff7ed;
+            border: 1px solid #fed7aa;
+        }
+        
+        .instructions {
+            text-align: center;
+            color: #b45309;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: rgba(255, 251, 235, 0.8);
+            border-radius: 10px;
+            border: 1px dashed #fbbf24;
+            line-height: 1.5;
+        }
+        
+        .year-horse {
+            text-align: center;
+            margin-top: 15px;
+            color: #dc2626;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        
+        /* 图片预览模态框 */
+        .image-preview-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .image-preview-content {
+            max-width: 95%;
+            max-height: 85%;
+            margin-bottom: 20px;
+            border: 3px solid #fbbf24;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+            background-color: white;
+        }
+        
+        .preview-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .preview-instructions {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+        
+        .close-preview-btn {
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        /* 导出加载动画 */
+        .export-loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .loading-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            max-width: 80%;
+        }
+        
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #dc2626;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 手机端长按提示 */
+        .mobile-instruction {
+            display: none;
+            text-align: center;
+            color: #fbbf24;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            padding: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-instruction {
+                display: block;
+            }
+            
+            body {
+                padding: 10px;
+            }
+            
+            .calendar-container {
+                padding: 20px 15px;
+            }
+            
+            .title-section h1 {
+                font-size: 1.7rem;
+            }
+            
+            .month-year {
+                font-size: 1.5rem;
+            }
+            
+            .day {
+                min-height: 85px;
+                padding: 8px 2px;
+            }
+            
+            .day-number {
+                font-size: 1.1rem;
+            }
+            
+            .day-lunar, .day-special {
+                font-size: 0.7rem;
+            }
+            
+            .day-status {
+                font-size: 0.8rem;
+                padding: 4px 6px;
+            }
+            
+            .logo-placeholder {
+                height: 80px;
+            }
+            
+            .action-btn {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+            
+            .weekday {
+                font-size: 0.85rem;
+                padding: 8px 0;
+            }
+            
+            .calendar-days {
+                gap: 6px;
+            }
+            
+            .title-section h1::before, .title-section h1::after {
+                font-size: 1rem;
+            }
+            
+            .month-year::before, .month-year::after {
+                font-size: 1rem;
+            }
+            
+            .action-section {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .action-btn {
+                width: 90%;
+                justify-content: center;
+            }
+            
+            .preview-instructions {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .calendar-days {
+                gap: 4px;
+            }
+            
+            .day {
+                min-height: 75px;
+            }
+            
+            .legend {
+                gap: 10px;
+            }
+            
+            .legend-item {
+                font-size: 0.8rem;
+                padding: 5px 10px;
+            }
+            
+            .logo-placeholder {
+                height: 60px;
+            }
+            
+            .title-section h1 {
+                font-size: 1.4rem;
+            }
+            
+            .subtitle {
+                font-size: 0.95rem;
+            }
+        }
+        
+        /* 打印样式 */
+        @media print {
+            body {
+                background: white !important;
+            }
+            
+            .horse-decoration, .action-section, .instructions, .mobile-instruction {
+                display: none !important;
+            }
+            
+            .calendar-container {
+                box-shadow: none !important;
+                border: 2px solid #dc2626 !important;
+                padding: 15px !important;
+            }
+            
+            .logo-section {
+                margin-bottom: 15px !important;
+                padding: 10px !important;
+            }
+        }
+    </style>
+    <!-- 引入Font Awesome图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 马年装饰元素 -->
+    <div class="horse-decoration horse-1">🐎</div>
+    <div class="horse-decoration horse-2">🐎</div>
+    
+    <!-- 图片预览模态框 -->
+    <div class="image-preview-modal" id="image-preview-modal">
+        <div class="preview-instructions" id="preview-instructions">
+            图片已生成！请长按图片保存到手机，或右键点击图片选择"另存为"保存到电脑。
+        </div>
+        <div class="image-preview-content">
+            <img class="preview-image" id="preview-image" src="" alt="营业时间表预览">
+        </div>
+        <div class="mobile-instruction">长按图片即可保存到手机相册</div>
+        <button class="close-preview-btn" id="close-preview-btn">关闭预览</button>
+    </div>
+    
+    <!-- 导出加载动画 -->
+    <div class="export-loading" id="export-loading">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>正在生成图片，请稍候...</p>
+            <p id="loading-details">准备生成营业时间表图片</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="calendar-container" id="calendar-container">
+            <!-- Logo区域 -->
+            <div class="logo-section">
+                <div class="logo-placeholder" id="logo-placeholder">
+                    <!-- Logo将在此处加载 -->
+                </div>
+            </div>
+            
+            <!-- 标题区域 -->
+            <div class="title-section">
+                <h1>果缤纷<span class="editable-store-name" id="store-name" contenteditable="true">XX店</span>春节营业时间表</h1>
+                <p class="subtitle">2026年农历丙午年（马年）春节期间营业安排</p>
+            </div>
+            
+            <!-- 操作按钮区域 -->
+            <div class="action-section">
+                <button class="action-btn" id="generate-image-btn">
+                    <i class="fas fa-image"></i> 生成营业时间表图片
+                </button>
+                <button class="action-btn reset-btn" id="reset-settings-btn">
+                    <i class="fas fa-redo"></i> 重置营业时间
+                </button>
+            </div>
+            
+            <!-- 日历区域 -->
+            <div class="month-year">2026年2月</div>
+            
+            <div class="calendar-weekdays">
+                <div class="weekday">日</div>
+                <div class="weekday">一</div>
+                <div class="weekday">二</div>
+                <div class="weekday">三</div>
+                <div class="weekday">四</div>
+                <div class="weekday">五</div>
+                <div class="weekday">六</div>
+            </div>
+            
+            <div class="calendar-days" id="calendar-days">
+                <!-- 日历日期将由JavaScript动态生成 -->
+            </div>
+            
+            <!-- 图例 -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color legend-open"></div>
+                    <span>营业</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-closed"></div>
+                    <span>休息</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-weekend"></div>
+                    <span>周末</span>
+                </div>
+            </div>
+            
+            <!-- 马年标识 -->
+            <div class="year-horse">🐎 2026农历丙午马年 🐎</div>
+            
+            <!-- 操作说明 -->
+            <div class="instructions">
+                <p>点击"营业"或"休息"文字可直接切换当天的营业状态 | 点击"XX店"可编辑店铺名称</p>
+                <p>设置完成后点击"生成营业时间表图片"按钮，生成图片后长按保存</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 日历数据 - 2026年2月
+        const calendarData = {
+            year: 2026,
+            month: 1, // 月份从0开始，1代表2月
+            daysInMonth: 28,
+            firstDay: 0, // 2026年2月1日是周日 (0代表周日)
+            specialDates: {
+                16: { lunar: "腊月廿九", note: "除夕" },
+                17: { lunar: "正月初一", note: "春节" }
+            },
+            weekends: [0, 6] // 周日和周六是周末
+        };
+
+        // 存储用户设置的营业状态
+        let scheduleSettings = {};
+        
+        // 在线Logo链接
+        const logoUrl = "https://alist.c99.qzz.io/d/%E5%BF%83%E6%9C%89%E7%81%B5%E7%8A%80/%E6%B0%B4%E6%9E%9C%E8%B5%84%E6%96%99%E6%96%87%E4%BB%B6%E5%A4%B9/%E7%B4%A0%E6%9D%90%E8%B5%84%E6%96%99/%E4%BA%A7%E5%93%81%E8%B5%84%E6%96%99%E5%BA%93/logo.png?sign=Ue6P-p7odToJZNSuX7MPARrrm9YQtGPETa_FVLfyG5U=:0";
+
+        // 初始化日历
+        function initCalendar() {
+            const calendarDays = document.getElementById('calendar-days');
+            calendarDays.innerHTML = '';
+            
+            // 添加空白日期（2月1日是周日，所以不需要添加空白）
+            for (let i = 0; i < calendarData.firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'day empty';
+                calendarDays.appendChild(emptyDay);
+            }
+            
+            // 添加日期
+            for (let day = 1; day <= calendarData.daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'day';
+                dayElement.dataset.day = day;
+                
+                // 检查是否为特殊日期
+                const isSpecial = calendarData.specialDates[day];
+                const dayOfWeek = (calendarData.firstDay + day - 1) % 7;
+                const isWeekend = calendarData.weekends.includes(dayOfWeek);
+                
+                // 添加日期数字
+                const dayNumber = document.createElement('div');
+                dayNumber.className = 'day-number';
+                dayNumber.textContent = day;
+                dayElement.appendChild(dayNumber);
+                
+                // 添加农历信息
+                const lunarInfo = document.createElement('div');
+                lunarInfo.className = 'day-lunar';
+                lunarInfo.textContent = isSpecial ? isSpecial.lunar : getLunarDay(day);
+                dayElement.appendChild(lunarInfo);
+                
+                // 添加特殊日期标记（仅除夕和春节）
+                if (isSpecial && isSpecial.note) {
+                    const specialNote = document.createElement('div');
+                    specialNote.className = 'day-special';
+                    specialNote.textContent = isSpecial.note;
+                    dayElement.appendChild(specialNote);
+                }
+                
+                // 添加营业状态标记
+                const statusElement = document.createElement('div');
+                statusElement.className = 'day-status';
+                
+                // 检查是否有用户设置，默认营业
+                if (scheduleSettings[day] === 'closed') {
+                    statusElement.textContent = '休息';
+                    statusElement.classList.add('status-closed');
+                    dayElement.classList.add('closed-day');
+                } else {
+                    statusElement.textContent = '营业';
+                    statusElement.classList.add('status-open');
+                }
+                
+                // 添加点击事件，点击状态文字切换状态
+                statusElement.addEventListener('click', function(event) {
+                    event.stopPropagation(); // 防止事件冒泡
+                    toggleDayStatus(day, statusElement, dayElement);
+                });
+                
+                dayElement.appendChild(statusElement);
+                
+                // 设置日期样式
+                if (isWeekend) {
+                    dayElement.classList.add('weekend');
+                }
+                
+                calendarDays.appendChild(dayElement);
+            }
+        }
+
+        // 获取农历日期（简化版）
+        function getLunarDay(day) {
+            const lunarMap = {
+                1: "十四", 2: "十五", 3: "十六", 4: "十七", 5: "十八",
+                6: "十九", 7: "二十", 8: "廿一", 9: "廿二", 10: "廿三",
+                11: "廿四", 12: "廿五", 13: "廿六", 14: "廿七", 15: "廿八",
+                16: "廿九", 17: "初一", 18: "初二", 19: "初三", 20: "初四",
+                21: "初五", 22: "初六", 23: "初七", 24: "初八", 25: "初九",
+                26: "初十", 27: "十一", 28: "十二"
+            };
+            return lunarMap[day] || "";
+        }
+
+        // 切换日期状态
+        function toggleDayStatus(day, statusElement, dayElement) {
+            // 切换状态
+            if (scheduleSettings[day] === 'closed') {
+                // 当前是休息，切换到营业
+                scheduleSettings[day] = 'open';
+                statusElement.textContent = '营业';
+                statusElement.classList.remove('status-closed');
+                statusElement.classList.add('status-open');
+                dayElement.classList.remove('closed-day');
+            } else {
+                // 当前是营业，切换到休息
+                scheduleSettings[day] = 'closed';
+                statusElement.textContent = '休息';
+                statusElement.classList.remove('status-open');
+                statusElement.classList.add('status-closed');
+                dayElement.classList.add('closed-day');
+            }
+            
+            // 保存设置到localStorage
+            saveSettingsToLocalStorage();
+        }
+
+        // 初始化Logo（使用在线Logo链接）
+        function initLogo() {
+            const logoPlaceholder = document.getElementById('logo-placeholder');
+            
+            // 创建img元素
+            const img = new Image();
+            
+            // 设置跨域属性，以便html2canvas可以正常使用
+            img.crossOrigin = "anonymous";
+            
+            img.onload = function() {
+                logoPlaceholder.innerHTML = '';
+                const logoImg = document.createElement('img');
+                logoImg.src = logoUrl;
+                logoImg.alt = '果缤纷水果店';
+                logoPlaceholder.appendChild(logoImg);
+            };
+            
+            img.onerror = function() {
+                // 如果在线Logo加载失败，使用备选方案
+                console.log('在线Logo加载失败，使用备选Logo');
+                createFallbackLogo();
+            };
+            
+            // 尝试加载图片
+            img.src = logoUrl;
+            
+            // 设置超时，防止图片加载过久
+            setTimeout(() => {
+                if (!img.complete) {
+                    console.log('Logo加载超时，使用备选Logo');
+                    createFallbackLogo();
+                }
+            }, 3000);
+        }
+        
+        // 创建备选Logo（当在线Logo无法加载时使用）
+        function createFallbackLogo() {
+            const logoPlaceholder = document.getElementById('logo-placeholder');
+            
+            // 创建一个简单的水果店Logo（使用base64编码，避免跨域问题）
+            const svgLogo = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100">
+                    <rect width="300" height="100" fill="#fef2f2" rx="8" ry="8"/>
+                    <text x="150" y="50" text-anchor="middle" fill="#dc2626" font-family="Microsoft YaHei, STKaiti" font-size="24" font-weight="bold">
+                        果缤纷水果店
+                    </text>
+                    <text x="150" y="75" text-anchor="middle" fill="#b45309" font-family="Microsoft YaHei, STKaiti" font-size="16">
+                        新鲜水果 · 健康生活
+                    </text>
+                </svg>
+            `;
+            
+            // 将SVG转换为base64
+            const svgBase64 = btoa(unescape(encodeURIComponent(svgLogo)));
+            
+            // 创建img元素
+            const img = new Image();
+            img.onload = function() {
+                logoPlaceholder.innerHTML = '';
+                const logoImg = document.createElement('img');
+                logoImg.src = 'data:image/svg+xml;base64,' + svgBase64;
+                logoImg.alt = '果缤纷水果店';
+                logoPlaceholder.appendChild(logoImg);
+            };
+            img.src = 'data:image/svg+xml;base64,' + svgBase64;
+        }
+
+        // 保存设置到localStorage
+        function saveSettingsToLocalStorage() {
+            try {
+                localStorage.setItem('fruitStoreSchedule', JSON.stringify(scheduleSettings));
+                localStorage.setItem('fruitStoreName', document.getElementById('store-name').textContent);
+            } catch (e) {
+                // 如果localStorage不可用，忽略错误
+                console.log('无法保存到本地存储:', e);
+            }
+        }
+
+        // 从localStorage加载设置
+        function loadSettingsFromLocalStorage() {
+            try {
+                const savedSchedule = localStorage.getItem('fruitStoreSchedule');
+                if (savedSchedule) {
+                    scheduleSettings = JSON.parse(savedSchedule);
+                }
+                
+                const savedStoreName = localStorage.getItem('fruitStoreName');
+                if (savedStoreName && savedStoreName !== 'XX店') {
+                    document.getElementById('store-name').textContent = savedStoreName;
+                }
+            } catch (e) {
+                // 如果localStorage不可用或数据损坏，忽略错误
+                console.log('无法从本地存储加载:', e);
+            }
+        }
+
+        // 显示导出加载动画
+        function showExportLoading() {
+            document.getElementById('export-loading').style.display = 'flex';
+        }
+
+        // 隐藏导出加载动画
+        function hideExportLoading() {
+            document.getElementById('export-loading').style.display = 'none';
+        }
+
+        // 显示图片预览模态框
+        function showImagePreview(imageDataUrl) {
+            const previewModal = document.getElementById('image-preview-modal');
+            const previewImage = document.getElementById('preview-image');
+            
+            // 设置图片源
+            previewImage.src = imageDataUrl;
+            
+            // 显示模态框
+            previewModal.style.display = 'flex';
+            
+            // 禁止背景滚动
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 隐藏图片预览模态框
+        function hideImagePreview() {
+            const previewModal = document.getElementById('image-preview-modal');
+            previewModal.style.display = 'none';
+            
+            // 恢复背景滚动
+            document.body.style.overflow = 'auto';
+        }
+
+        // 生成营业时间表图片
+        function generateCalendarImage() {
+            showExportLoading();
+            
+            // 更新加载提示
+            document.getElementById('loading-details').textContent = '正在生成图片...';
+            
+            // 隐藏操作按钮，使生成的图片更整洁
+            const actionSection = document.querySelector('.action-section');
+            const originalDisplay = actionSection.style.display;
+            actionSection.style.display = 'none';
+            
+            // 使用html2canvas将页面内容转换为图片
+            html2canvas(document.getElementById('calendar-container'), {
+                scale: 2, // 提高图片清晰度
+                useCORS: true, // 允许跨域图片
+                backgroundColor: '#ffffff',
+                logging: false, // 关闭日志
+                allowTaint: true, // 允许污染canvas（因为可能使用外部Logo）
+                imageTimeout: 15000, // 增加图片加载超时时间
+                onclone: function(clonedDoc) {
+                    // 在克隆的文档中隐藏按钮
+                    const clonedActionSection = clonedDoc.querySelector('.action-section');
+                    if (clonedActionSection) {
+                        clonedActionSection.style.display = 'none';
+                    }
+                }
+            }).then(canvas => {
+                // 恢复操作按钮显示
+                actionSection.style.display = originalDisplay;
+                
+                // 获取图片数据
+                const imageDataUrl = canvas.toDataURL('image/png');
+                
+                // 显示图片预览
+                showImagePreview(imageDataUrl);
+                
+                hideExportLoading();
+            }).catch(error => {
+                console.error('生成图片时出错:', error);
+                
+                // 恢复操作按钮显示
+                actionSection.style.display = originalDisplay;
+                
+                // 尝试使用备选方案
+                tryAlternativeImageGeneration();
+            });
+        }
+        
+        // 尝试使用备选方案生成图片
+        function tryAlternativeImageGeneration() {
+            document.getElementById('loading-details').textContent = '使用备选方案生成图片...';
+            
+            // 创建临时Canvas
+            const container = document.getElementById('calendar-container');
+            const tempCanvas = document.createElement('canvas');
+            const ctx = tempCanvas.getContext('2d');
+            
+            // 设置Canvas尺寸
+            tempCanvas.width = container.offsetWidth * 2;
+            tempCanvas.height = container.offsetHeight * 2;
+            
+            // 设置白色背景
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            
+            // 绘制容器内容（简化版本，只绘制文本和基本样式）
+            drawContainerToCanvas(container, ctx, tempCanvas.width, tempCanvas.height);
+            
+            // 获取图片数据
+            const imageDataUrl = tempCanvas.toDataURL('image/png');
+            
+            // 显示图片预览
+            showImagePreview(imageDataUrl);
+            
+            hideExportLoading();
+        }
+        
+        // 将容器内容绘制到Canvas（简化版本）
+        function drawContainerToCanvas(container, ctx, width, height) {
+            // 这里实现一个简化的绘制逻辑
+            // 由于时间关系，我们只提示用户使用截屏功能
+            ctx.fillStyle = '#dc2626';
+            ctx.font = 'bold 30px "Microsoft YaHei"';
+            ctx.textAlign = 'center';
+            ctx.fillText('图片生成失败', width/2, height/2 - 30);
+            ctx.font = '20px "Microsoft YaHei"';
+            ctx.fillText('请使用手机截屏功能保存页面', width/2, height/2 + 20);
+            ctx.fillText('或按Ctrl+P打印页面', width/2, height/2 + 60);
+        }
+
+        // 重置营业时间设置
+        function resetScheduleSettings() {
+            if (confirm('确定要重置所有营业时间设置吗？')) {
+                scheduleSettings = {};
+                
+                // 恢复默认设置：除夕和春节休息
+                scheduleSettings[16] = 'closed';
+                scheduleSettings[17] = 'closed';
+                
+                // 重置店铺名称
+                document.getElementById('store-name').textContent = 'XX店';
+                
+                // 重新初始化日历
+                initCalendar();
+                
+                // 清除本地存储
+                try {
+                    localStorage.removeItem('fruitStoreSchedule');
+                    localStorage.removeItem('fruitStoreName');
+                } catch (e) {
+                    console.log('无法清除本地存储:', e);
+                }
+                
+                alert('营业时间设置已重置！');
+            }
+        }
+
+        // 初始化功能
+        function initFunctions() {
+            // 生成图片按钮
+            document.getElementById('generate-image-btn').addEventListener('click', generateCalendarImage);
+            
+            // 重置按钮
+            document.getElementById('reset-settings-btn').addEventListener('click', resetScheduleSettings);
+            
+            // 关闭预览按钮
+            document.getElementById('close-preview-btn').addEventListener('click', hideImagePreview);
+            
+            // 点击模态框背景关闭预览
+            document.getElementById('image-preview-modal').addEventListener('click', function(event) {
+                if (event.target === this) {
+                    hideImagePreview();
+                }
+            });
+            
+            // 按ESC键关闭预览
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    hideImagePreview();
+                }
+            });
+            
+            // 设置店铺名称编辑功能
+            const storeNameElement = document.getElementById('store-name');
+            storeNameElement.addEventListener('focus', function() {
+                if (this.textContent === 'XX店') {
+                    this.textContent = '';
+                }
+            });
+            
+            storeNameElement.addEventListener('blur', function() {
+                if (this.textContent.trim() === '') {
+                    this.textContent = 'XX店';
+                }
+                saveSettingsToLocalStorage();
+            });
+            
+            // 监听店铺名称输入变化
+            storeNameElement.addEventListener('input', function() {
+                saveSettingsToLocalStorage();
+            });
+            
+            // 添加键盘快捷键支持
+            document.addEventListener('keydown', function(event) {
+                // Ctrl+S 保存当前状态
+                if (event.ctrlKey && event.key === 's') {
+                    event.preventDefault();
+                    saveSettingsToLocalStorage();
+                    alert('营业时间设置已保存！');
+                }
+                
+                // Ctrl+G 生成图片
+                if (event.ctrlKey && event.key === 'g') {
+                    event.preventDefault();
+                    generateCalendarImage();
+                }
+            });
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始设置：除夕和春节休息
+            scheduleSettings[16] = 'closed';
+            scheduleSettings[17] = 'closed';
+            
+            // 从localStorage加载之前的设置
+            loadSettingsFromLocalStorage();
+            
+            initCalendar();
+            initLogo();
+            initFunctions();
+            
+            // 添加页面加载完成提示
+            setTimeout(function() {
+                console.log('果缤纷水果店营业时间表已加载完成！');
+            }, 500);
+        });
+        
+        // 添加页面可见性变化监听，当页面重新获得焦点时刷新日历
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                initCalendar();
+            }
+        });
+    </script>
+</body>
+</html>
